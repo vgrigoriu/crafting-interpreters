@@ -63,11 +63,20 @@ namespace lox.net
                 case ';':
                     return CreateToken(TokenType.SEMICOLON);
                 case '/':
+                    // TODO: Need to hadle // comments.
                     return CreateToken(TokenType.SLASH);
                 case '*':
                     return CreateToken(TokenType.STAR);
+                case '!':
+                    return CreateToken(Match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+                case '=':
+                    return CreateToken(Match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+                case '<':
+                    return CreateToken(Match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+                case '>':
+                    return CreateToken(Match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
                 default:
-                    // TODO: Report which unexpected character.
+                    // TODO: Report the actual unexpected character.
                     // TODO: Group together a run of unexpected characrters in a single error.
                     await Program.ErrorAsync(line, "Unexpected character.");
                     return null;
@@ -89,6 +98,22 @@ namespace lox.net
         {
             var text = source.Substring(start, current - start);
             return new Token(type, text, literal, line);
+        }
+
+        private bool Match(char expected)
+        {
+            if (IsAtEnd())
+            {
+                return false;
+            }
+            
+            if (source[current] != expected)
+            {
+                return false;
+            }
+
+            current++;
+            return true;
         }
     }
 }
