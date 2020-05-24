@@ -97,12 +97,42 @@ namespace lox.net
                 case '\n':
                     line++;
                     return null;
+
+                case '"':
+                    return await StringAsync();
+
                 default:
                     // TODO: Report the actual unexpected character.
                     // TODO: Group together a run of unexpected characrters in a single error.
                     await Program.ErrorAsync(line, "Unexpected character.");
                     return null;
             }
+        }
+
+        private async Task<Token?> StringAsync()
+        {
+            while (Peek() != '"' && !IsAtEnd())
+            {
+                if (Peek() == '\n')
+                {
+                    line++;
+                }
+
+                Advance();
+            }
+
+            // Unterminated string.
+            if (IsAtEnd())
+            {
+                await Program.ErrorAsync(line, "Unterminated string.");
+                return null;
+            }
+
+            // The closing ".
+            Advance();
+
+            var value = source.Substring(start + 1, current - start - 2);
+            return CreateToken(TokenType.STRING, value);
         }
 
         private char Advance()
