@@ -49,5 +49,7 @@ namespace lox.net
         WHILE,
 
         EOF,
+
+        LINE_COMMENT,
     }
 }

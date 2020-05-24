@@ -30,7 +30,7 @@ namespace lox.net
                 {
                     yield return token;
                 }
-                // Rlse, we got an error but keep on scanning.
+                // Else, either we ignored some whitespace, or we got an error but we keep on scanning.
             }
 
             yield return new Token(TokenType.EOF, "", null, line);
@@ -63,8 +63,20 @@ namespace lox.net
                 case ';':
                     return CreateToken(TokenType.SEMICOLON);
                 case '/':
-                    // TODO: Need to hadle // comments.
-                    return CreateToken(TokenType.SLASH);
+                    if (Match('/'))
+                    {
+                        // Ignore everything until the end of the line.
+                        while (Peek() != '\n' && !IsAtEnd())
+                        {
+                            Advance();
+                        }
+                        // TODO: Also store the content of the comment.
+                        return CreateToken(TokenType.LINE_COMMENT);
+                    }
+                    else
+                    {
+                        return CreateToken(TokenType.SLASH);
+                    }
                 case '*':
                     return CreateToken(TokenType.STAR);
                 case '!':
@@ -75,6 +87,16 @@ namespace lox.net
                     return CreateToken(Match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
                 case '>':
                     return CreateToken(Match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+
+                case ' ':
+                case '\r':
+                case '\t':
+                    // ignore whitespace
+                    return null;
+
+                case '\n':
+                    line++;
+                    return null;
                 default:
                     // TODO: Report the actual unexpected character.
                     // TODO: Group together a run of unexpected characrters in a single error.
@@ -114,6 +136,16 @@ namespace lox.net
 
             current++;
             return true;
+        }
+
+        private char Peek()
+        {
+            if (IsAtEnd())
+            {
+                return '\0';
+            }
+
+            return source[current];
         }
     }
 }
