@@ -1,6 +1,6 @@
 namespace lox.net
 {
-    enum TokenType
+    public enum TokenType
     {
         // Single-character tokens.
         LEFT_PAREN,

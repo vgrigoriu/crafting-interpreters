@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace lox.net
 {
-    class Scanner
+    public class Scanner
     {
         private readonly string source;
 
@@ -70,7 +70,7 @@ namespace lox.net
                         {
                             Advance();
                         }
-                        // TODO: Also store the content of the comment.
+                        // TODO: Store the content of the comment excluding // as value.
                         return CreateToken(TokenType.LINE_COMMENT);
                     }
                     else
