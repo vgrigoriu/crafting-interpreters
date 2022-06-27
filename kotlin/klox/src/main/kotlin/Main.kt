@@ -41,5 +41,5 @@ fun run(source: String, errorReporter: ErrorReporter) {
     val scanner = Scanner(source, errorReporter)
     val tokens = scanner.scanTokens()
 
-    tokens.forEach { print(it) }
+    tokens.forEach { println(it) }
 }
