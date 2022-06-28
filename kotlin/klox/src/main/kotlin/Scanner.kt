@@ -2,6 +2,27 @@ class Scanner(
     private val source: String,
     private val errorReporter: ErrorReporter
 ) {
+    companion object {
+        private val keywords = mapOf(
+            "and"    to TokenType.AND,
+            "class"  to TokenType.CLASS,
+            "else"   to TokenType.ELSE,
+            "false"  to TokenType.FALSE,
+            "for"    to TokenType.FOR,
+            "fun"    to TokenType.FUN,
+            "if"     to TokenType.IF,
+            "nil"    to TokenType.NIL,
+            "or"     to TokenType.OR,
+            "print"  to TokenType.PRINT,
+            "return" to TokenType.RETURN,
+            "super"  to TokenType.SUPER,
+            "this"   to TokenType.THIS,
+            "true"   to TokenType.TRUE,
+            "var"    to TokenType.VAR,
+            "while"  to TokenType.WHILE
+        )
+    }
+
     private val tokens = mutableListOf<Token>()
 
     private var start = 0
@@ -83,6 +104,8 @@ class Scanner(
             else -> {
                 if (isDigit(c)) {
                     number()
+                } else if (isAlpha(c)) {
+                    identifier()
                 } else {
                     errorReporter.error(line, "Unexpected character: $c")
                 }
@@ -152,6 +175,14 @@ class Scanner(
         return c in '0'..'9'
     }
 
+    private fun isAlpha(c: Char): Boolean {
+        return (c in 'a'..'z') || (c in 'A'..'Z') || c == '_'
+    }
+
+    private fun isAlphaNumeric(c: Char): Boolean {
+        return isAlpha(c) || isDigit(c)
+    }
+
     private fun number() {
         while (isDigit(peek())) {
             advance()
@@ -168,5 +199,16 @@ class Scanner(
         }
 
         addToken(TokenType.NUMBER, source.substring(start, current).toDouble())
+    }
+
+    private fun identifier() {
+        while (isAlphaNumeric(peek())) {
+            advance()
+        }
+
+        val text = source.substring(start, current)
+        val tokenType = keywords[text] ?: TokenType.IDENTIFIER
+
+        addToken(tokenType)
     }
 }
