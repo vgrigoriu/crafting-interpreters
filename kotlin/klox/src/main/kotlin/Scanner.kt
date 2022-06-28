@@ -81,7 +81,11 @@ class Scanner(
                 string()
             }
             else -> {
-                errorReporter.error(line, "Unexpected character: $c")
+                if (isDigit(c)) {
+                    number()
+                } else {
+                    errorReporter.error(line, "Unexpected character: $c")
+                }
             }
         }
     }
@@ -111,6 +115,13 @@ class Scanner(
         return if (isAtEnd()) 0.toChar() else source[current]
     }
 
+    private fun peekNext(): Char {
+        if (current + 1 >= source.length) {
+            return 0.toChar()
+        }
+        return source[current + 1]
+    }
+
     private fun isAtEnd(): Boolean {
         return current >= source.length
     }
@@ -135,5 +146,27 @@ class Scanner(
         // Trim the surrounding quotes.
         val value = source.substring(start + 1, current - 1)
         addToken(TokenType.STRING, value)
+    }
+
+    private fun isDigit(c: Char): Boolean {
+        return c in '0'..'9'
+    }
+
+    private fun number() {
+        while (isDigit(peek())) {
+            advance()
+        }
+
+        // Look for a fractional part.
+        if (peek() == '.' && isDigit(peekNext())) {
+            // Consume the ".".
+            advance()
+
+            while (isDigit(peek())) {
+                advance()
+            }
+        }
+
+        addToken(TokenType.NUMBER, source.substring(start, current).toDouble())
     }
 }
