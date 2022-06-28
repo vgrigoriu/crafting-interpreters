@@ -77,6 +77,9 @@ class Scanner(
             '\n' -> {
                 line++
             }
+            '"' -> {
+                string()
+            }
             else -> {
                 errorReporter.error(line, "Unexpected character: $c")
             }
@@ -110,5 +113,27 @@ class Scanner(
 
     private fun isAtEnd(): Boolean {
         return current >= source.length
+    }
+
+    private fun string() {
+        while (peek() != '"' && !isAtEnd()) {
+            // Count lines inside of strings.
+            if (peek() == '\n') {
+                line++
+            }
+            advance()
+        }
+
+        if (isAtEnd()) {
+            errorReporter.error(line, "Unterminated string.")
+            return
+        }
+
+        // The closing ".
+        advance()
+
+        // Trim the surrounding quotes.
+        val value = source.substring(start + 1, current - 1)
+        addToken(TokenType.STRING, value)
     }
 }
