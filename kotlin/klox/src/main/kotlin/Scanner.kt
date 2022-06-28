@@ -62,6 +62,21 @@ class Scanner(
             '>' -> {
                 addToken(if (match('=')) TokenType.GREATER_EQUAL else TokenType.GREATER)
             }
+            '/' -> {
+                if (match('/')) {
+                    // A comment goes until the end of the line.
+                    while (peek() != '\n' && !isAtEnd()) {
+                        advance()
+                    }
+                } else {
+                    addToken(TokenType.SLASH)
+                }
+            }
+            // Ignore whitespace.
+            ' ', '\r', '\t' -> {}
+            '\n' -> {
+                line++
+            }
             else -> {
                 errorReporter.error(line, "Unexpected character: $c")
             }
@@ -87,6 +102,10 @@ class Scanner(
 
         current++
         return true
+    }
+
+    private fun peek(): Char {
+        return if (isAtEnd()) 0.toChar() else source[current]
     }
 
     private fun isAtEnd(): Boolean {
