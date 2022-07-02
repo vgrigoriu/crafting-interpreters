@@ -12,15 +12,17 @@ fun main(args: Array<String>) {
     val outputDir = args[0]
     defineAst(
         outputDir, "Expr", listOf(
-            "Binary   : Expr left, Token operator, Expr right",
-            "Grouping : Expr expression",
-            "Literal  : Any value",
-            "Unary    : Token operator, Expr right",
+            Type("Binary", "Expr left, Token operator, Expr right"),
+            Type("Grouping", "Expr expression"),
+            Type("Literal", "Any value"),
+            Type("Unary", "Token operator, Expr right"),
         )
     )
 }
 
-private fun defineAst(outputDir: String, baseName: String, types: List<String>) {
+data class Type(val className: String, val fields: String)
+
+private fun defineAst(outputDir: String, baseName: String, types: List<Type>) {
     val path = "$outputDir/$baseName.kt"
     val writer = PrintWriter(path, Charsets.UTF_8)
 
@@ -29,9 +31,7 @@ private fun defineAst(outputDir: String, baseName: String, types: List<String>) 
     writer.println("abstract class $baseName {")
 
     for (type in types) {
-        val className = type.split(":")[0].trim()
-        val fields = type.split(":")[1].trim()
-        defineType(writer, baseName, className, fields)
+        defineType(writer, baseName, type)
     }
 
     writer.println("}")
@@ -41,17 +41,16 @@ private fun defineAst(outputDir: String, baseName: String, types: List<String>) 
 fun defineType(
     writer: PrintWriter,
     baseName: String,
-    className: String,
-    fieldList: String) {
-    writer.println("    class $className(")
+    type: Type) {
+    writer.println("    class ${type.className}(")
 
     // Store parameters in fields.
-    val fields = fieldList.split(", ")
+    val fields = type.fields.split(", ")
     for (field in fields) {
-        val type = field.split(" ")[0]
+        val fieldType = field.split(" ")[0]
         val name = field.split(" ")[1]
-        writer.println("        val $name: $type,")
+        writer.println("        val $name: $fieldType,")
     }
 
-    writer.println("    ): $baseName()")
+    writer.println("    ) : $baseName()")
 }
