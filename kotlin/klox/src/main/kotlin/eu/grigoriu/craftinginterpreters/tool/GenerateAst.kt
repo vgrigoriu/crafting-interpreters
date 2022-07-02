@@ -12,15 +12,15 @@ fun main(args: Array<String>) {
     val outputDir = args[0]
     defineAst(
         outputDir, "Expr", listOf(
-            Type("Binary", "Expr left, Token operator, Expr right"),
-            Type("Grouping", "Expr expression"),
-            Type("Literal", "Any value"),
-            Type("Unary", "Token operator, Expr right"),
+            Type("Binary", listOf("Expr left", "Token operator", "Expr right")),
+            Type("Grouping", listOf("Expr expression")),
+            Type("Literal", listOf("Any value")),
+            Type("Unary", listOf("Token operator", "Expr right")),
         )
     )
 }
 
-data class Type(val className: String, val fields: String)
+data class Type(val className: String, val fields: List<String>)
 
 private fun defineAst(outputDir: String, baseName: String, types: List<Type>) {
     val path = "$outputDir/$baseName.kt"
@@ -45,8 +45,7 @@ fun defineType(
     writer.println("    class ${type.className}(")
 
     // Store parameters in fields.
-    val fields = type.fields.split(", ")
-    for (field in fields) {
+    for (field in type.fields) {
         val fieldType = field.split(" ")[0]
         val name = field.split(" ")[1]
         writer.println("        val $name: $fieldType,")
