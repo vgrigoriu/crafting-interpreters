@@ -1,3 +1,5 @@
+package eu.grigoriu.craftinginterpreters.klox
+
 class Scanner(
     private val source: String,
     private val errorReporter: ErrorReporter
