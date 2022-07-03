@@ -2,7 +2,7 @@ package eu.grigoriu.craftinginterpreters.klox
 
 class Token(
     private val type: TokenType,
-    private val lexeme: String,
+    val lexeme: String,
     // Can we make this generic?
     private val literal: Any?,
     line: Int

@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
             Type("Grouping", listOf(
                 Field("Expr", "expression"))),
             Type("Literal", listOf(
-                Field("Any", "value"))),
+                Field("Any?", "value"))),
             Type("Unary", listOf(
                 Field("Token", "operator"),
                 Field("Expr", "right"))),
