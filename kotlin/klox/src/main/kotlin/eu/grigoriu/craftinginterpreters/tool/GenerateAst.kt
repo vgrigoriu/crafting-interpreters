@@ -38,12 +38,29 @@ private fun defineAst(outputDir: String, baseName: String, types: List<Type>) {
     writer.println()
     writer.println("abstract class $baseName {")
 
+    defineVisitor(writer, baseName, types)
+
     for (type in types) {
+        writer.println()
         defineType(writer, baseName, type)
     }
 
+    // The base accept() method.
+    writer.println()
+    writer.println("    abstract fun <R> accept(visitor: Visitor<R>): R")
+
     writer.println("}")
     writer.close()
+}
+
+fun defineVisitor(writer: PrintWriter, baseName: String, types: List<Type>) {
+    writer.println("    interface Visitor<R> {")
+
+    for (type in types) {
+        writer.println("        fun visit${type.className}$baseName(${baseName.lowercase()}: ${type.className}): R")
+    }
+
+    writer.println("    }")
 }
 
 fun defineType(
@@ -58,5 +75,14 @@ fun defineType(
         writer.println("        val ${field.name}: ${field.type},")
     }
 
-    writer.println("    ) : $baseName()")
+    writer.println("    ) : $baseName() {")
+
+    // Visitor pattern.
+    writer.println("        override fun <R> accept(visitor: Visitor<R>): R {")
+    writer.println("            return visitor.visit${type.className}$baseName(this)")
+    writer.println("        }")
+
+
+
+    writer.println("    }")
 }
