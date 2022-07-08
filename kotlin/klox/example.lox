@@ -1,12 +1,1 @@
-class Breakfast {
-  init(meat, bread) {
-    this.meat = meat;
-    this.bread = bread;
-  }
-
-  // ...
-}
-
-var baconAndToast = Breakfast("bacon", "toast");
-baconAndToast.serve("Dear Reader");
-// "Enjoy your bacon and toast, Dear Reader."
+1 + 2 - 3 * 4 > (5 / "6") == - true / false / nil

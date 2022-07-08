@@ -3,7 +3,15 @@ package eu.grigoriu.craftinginterpreters.klox
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
 class Parser(private val tokens: List<Token>, private val errorReporter: ErrorReporter) {
-    class ParseError : RuntimeException()
+    fun parse(): Expr? {
+        return try {
+            expression()
+        } catch (error: ParseError) {
+            null
+        }
+    }
+
+    private class ParseError : RuntimeException()
 
     private var current = 0
 
@@ -67,7 +75,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             return Expr.Grouping(expr)
         }
 
-        throw ParseError()
+        throw error(peek(), "Expect expression.")
     }
 
     private fun consume(type: TokenType, message: String): Token {

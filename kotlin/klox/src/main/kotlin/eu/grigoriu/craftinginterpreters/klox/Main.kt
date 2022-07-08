@@ -43,5 +43,12 @@ fun run(source: String, errorReporter: ErrorReporter) {
     val scanner = Scanner(source, errorReporter)
     val tokens = scanner.scanTokens()
 
-    tokens.forEach { println(it) }
+    val parser = Parser(tokens, errorReporter)
+    val expression = parser.parse()
+
+    if (errorReporter.hadError) {
+        return
+    }
+
+    println(AstPrinter().print(expression!!))
 }

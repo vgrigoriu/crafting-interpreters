@@ -23,7 +23,7 @@ abstract class ErrorReporter {
     protected abstract fun reportInternal(line: Int, where: String, message: String)
 
     fun reset() {
-        hadError = true
+        hadError = false
     }
 }
 
