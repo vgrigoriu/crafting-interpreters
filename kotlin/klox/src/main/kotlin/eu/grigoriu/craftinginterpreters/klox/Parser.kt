@@ -2,7 +2,9 @@ package eu.grigoriu.craftinginterpreters.klox
 
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
-class Parser(private val tokens: List<Token>) {
+class Parser(private val tokens: List<Token>, private val errorReporter: ErrorReporter) {
+    class ParseError : RuntimeException()
+
     private var current = 0
 
     // expression     → equality ;
@@ -61,13 +63,39 @@ class Parser(private val tokens: List<Token>) {
 
         if (match(LEFT_PAREN)) {
             val expr = expression()
-            consume(LEFT_PAREN, "Expect ')' after expression.")
+            consume(RIGHT_PAREN, "Expect ')' after expression.")
             return Expr.Grouping(expr)
         }
+
+        throw ParseError()
     }
 
-    private fun consume(type: TokenType, error: String) {
-        TODO("Not yet implemented")
+    private fun consume(type: TokenType, message: String): Token {
+        if (check(type)) {
+            return advance()
+        }
+
+        throw error(peek(), message)
+    }
+
+    private fun error(token: Token, message: String): ParseError {
+        errorReporter.error(token, message)
+        return ParseError()
+    }
+
+    private fun synchronize() {
+        advance()
+
+        while (!isAtEnd()) {
+            if (previous().type == SEMICOLON) {
+                return
+            }
+
+            when (peek().type) {
+                CLASS, FUN, VAR, FOR, IF, WHILE, PRINT, RETURN -> return
+                else -> advance()
+            }
+        }
     }
 
     private fun leftAssocExpr(operand: () -> Expr, vararg operators: TokenType): Expr {

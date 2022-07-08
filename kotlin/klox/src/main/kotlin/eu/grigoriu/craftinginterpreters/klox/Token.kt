@@ -5,7 +5,7 @@ class Token(
     val lexeme: String,
     // Can we make this generic?
     val literal: Any?,
-    line: Int
+    val line: Int
 ) {
     override fun toString(): String {
         return "$type $lexeme $literal"
