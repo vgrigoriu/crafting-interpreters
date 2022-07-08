@@ -1,10 +1,10 @@
 package eu.grigoriu.craftinginterpreters.klox
 
 class Token(
-    private val type: TokenType,
+    val type: TokenType,
     val lexeme: String,
     // Can we make this generic?
-    private val literal: Any?,
+    val literal: Any?,
     line: Int
 ) {
     override fun toString(): String {
