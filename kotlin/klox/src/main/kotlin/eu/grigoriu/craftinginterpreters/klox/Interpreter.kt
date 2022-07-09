@@ -16,7 +16,10 @@ class Interpreter : Expr.Visitor<Any?> {
 
         return when (expr.operator.type) {
             BANG -> !isTruthy(right)
-            MINUS -> -(right as Double)
+            MINUS -> {
+                checkNumberOperand(expr.operator, right)
+                -(right as Double)
+            }
             else -> null
         }
     }
@@ -26,22 +29,43 @@ class Interpreter : Expr.Visitor<Any?> {
         val right = evaluate(expr.right)
 
         return when (expr.operator.type) {
-            MINUS -> left as Double - right as Double
-            SLASH -> left as Double / right as Double
-            STAR -> left as Double * right as Double
+            MINUS -> {
+                checkNumberOperands(expr.operator, left, right)
+                left as Double - right as Double
+            }
+            SLASH -> {
+                checkNumberOperands(expr.operator, left, right)
+                left as Double / right as Double
+            }
+            STAR -> {
+                checkNumberOperands(expr.operator, left, right)
+                left as Double * right as Double
+            }
             PLUS -> {
                 if (left is Double && right is Double) {
                     left + right
                 } else if (left is String && right is String) {
                     left + right
                 } else {
-                    null
+                    throw RuntimeError(expr.operator, "Operands must be two numbers or new strings.")
                 }
             }
-            GREATER -> left as Double > right as Double
-            GREATER_EQUAL -> left as Double >= right as Double
-            LESS -> (left as Double) < right as Double
-            LESS_EQUAL -> left as Double <= right as Double
+            GREATER -> {
+                checkNumberOperands(expr.operator, left, right)
+                left as Double > right as Double
+            }
+            GREATER_EQUAL -> {
+                checkNumberOperands(expr.operator, left, right)
+                left as Double >= right as Double
+            }
+            LESS -> {
+                checkNumberOperands(expr.operator, left, right)
+                (left as Double) < right as Double
+            }
+            LESS_EQUAL -> {
+                checkNumberOperands(expr.operator, left, right)
+                left as Double <= right as Double
+            }
             BANG_EQUAL -> left != right
             EQUAL_EQUAL -> left == right
             else -> null
@@ -58,5 +82,21 @@ class Interpreter : Expr.Visitor<Any?> {
             is Boolean -> obj
             else -> true
         }
+    }
+
+    private fun checkNumberOperand(operator: Token, operand: Any?) {
+        if (operand is Double) {
+            return
+        }
+
+        throw RuntimeError(operator, "Operand must be a number")
+    }
+
+    private fun checkNumberOperands(operator: Token, left: Any?, right: Any?) {
+        if (left is Double && right is Double) {
+            return
+        }
+
+        throw RuntimeError(operator, "Operands must be numbers.")
     }
 }
