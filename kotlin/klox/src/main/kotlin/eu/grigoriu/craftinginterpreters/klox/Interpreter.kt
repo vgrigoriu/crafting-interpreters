@@ -2,7 +2,16 @@ package eu.grigoriu.craftinginterpreters.klox
 
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
-class Interpreter : Expr.Visitor<Any?> {
+class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?> {
+    fun interpret(expression: Expr) {
+        try {
+            val value = evaluate(expression)
+            println(stringify(value))
+        } catch (error: RuntimeError) {
+            errorReporter.runtimeError(error)
+        }
+    }
+
     override fun visitLiteralExpr(expr: Expr.Literal): Any? {
         return expr.value
     }
@@ -81,6 +90,22 @@ class Interpreter : Expr.Visitor<Any?> {
             null -> false
             is Boolean -> obj
             else -> true
+        }
+    }
+
+    private fun stringify(obj: Any?): String {
+        return when (obj) {
+            null -> {
+                "nil"
+            }
+            is Double -> {
+                var text = obj.toString()
+                if (text.endsWith(".0")) {
+                    text = text.substring(0, text.length - 2)
+                }
+                text
+            }
+            else -> obj.toString()
         }
     }
 

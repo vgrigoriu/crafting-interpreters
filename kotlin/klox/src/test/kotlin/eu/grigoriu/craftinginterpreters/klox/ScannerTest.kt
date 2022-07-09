@@ -17,5 +17,9 @@ class ScannerTest {
         override fun reportInternal(line: Int, where: String, message: String) {
             TODO("Not yet implemented")
         }
+
+        override fun reportRuntimeInternal(message: String?, line: Int) {
+            TODO("Not yet implemented")
+        }
     }
 }

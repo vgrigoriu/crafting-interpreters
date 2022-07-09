@@ -25,6 +25,9 @@ fun runFile(path: String, errorReporter: ErrorReporter) {
     if (errorReporter.hadError) {
         exitProcess(65)
     }
+    if (errorReporter.hadRuntimeError) {
+        exitProcess(70)
+    }
 }
 
 fun runPrompt(errorReporter: ErrorReporter) {
@@ -44,11 +47,8 @@ fun run(source: String, errorReporter: ErrorReporter) {
     val tokens = scanner.scanTokens()
 
     val parser = Parser(tokens, errorReporter)
-    val expression = parser.parse()
+    val expression = parser.parse() ?: return
 
-    if (errorReporter.hadError) {
-        return
-    }
-
-    println(AstPrinter().print(expression!!))
+    val interpreter = Interpreter(errorReporter)
+    interpreter.interpret(expression)
 }
