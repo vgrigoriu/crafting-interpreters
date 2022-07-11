@@ -25,6 +25,12 @@ fun main(args: Array<String>) {
                 Field("Expr", "right"))),
         )
     )
+    defineAst(outputDir, "Stmt", listOf(
+        Type("Expression", listOf(
+            Field("Expr", "expression"))),
+        Type("Print", listOf(
+            Field("Expr", "expression")))
+    ))
 }
 
 data class Type(val className: String, val fields: List<Field>)
