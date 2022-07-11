@@ -2,14 +2,28 @@ package eu.grigoriu.craftinginterpreters.klox
 
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
-class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?> {
-    fun interpret(expression: Expr) {
+class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
+    fun interpret(statements: List<Stmt>) {
         try {
-            val value = evaluate(expression)
-            println(stringify(value))
+            for (statement in statements) {
+                execute(statement)
+            }
         } catch (error: RuntimeError) {
             errorReporter.runtimeError(error)
         }
+    }
+
+    private fun execute(stmt: Stmt) {
+        stmt.accept(this)
+    }
+
+    override fun visitExpressionStmt(stmt: Stmt.Expression) {
+        evaluate(stmt.expression)
+    }
+
+    override fun visitPrintStmt(stmt: Stmt.Print) {
+        val value = evaluate(stmt.expression)
+        println(stringify(value))
     }
 
     override fun visitLiteralExpr(expr: Expr.Literal): Any? {

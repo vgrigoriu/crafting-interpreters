@@ -1,1 +1,5 @@
-1 + 2 - 3 * 4 > (5 / "6") == - true / false / nil
+print 1 + 2;
+
+print "cucu";
+
+print 1 < 2;

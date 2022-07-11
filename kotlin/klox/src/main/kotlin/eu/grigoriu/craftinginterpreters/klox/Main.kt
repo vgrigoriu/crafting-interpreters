@@ -47,8 +47,8 @@ fun run(source: String, errorReporter: ErrorReporter) {
     val tokens = scanner.scanTokens()
 
     val parser = Parser(tokens, errorReporter)
-    val expression = parser.parse() ?: return
+    val statements = parser.parse()
 
     val interpreter = Interpreter(errorReporter)
-    interpreter.interpret(expression)
+    interpreter.interpret(statements)
 }
