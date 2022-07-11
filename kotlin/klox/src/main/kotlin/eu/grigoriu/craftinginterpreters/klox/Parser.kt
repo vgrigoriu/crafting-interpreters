@@ -3,17 +3,43 @@ package eu.grigoriu.craftinginterpreters.klox
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
 class Parser(private val tokens: List<Token>, private val errorReporter: ErrorReporter) {
-    fun parse(): Expr? {
-        return try {
-            expression()
-        } catch (error: ParseError) {
-            null
+    // program        → statement* EOF ;
+    fun parse(): List<Stmt> {
+        val statements = mutableListOf<Stmt>()
+        while (!isAtEnd()) {
+            statements.add(statement())
         }
+
+        return statements
     }
 
     private class ParseError : RuntimeException()
 
     private var current = 0
+
+    // statement      → exprStmt | printStmt ;
+    private fun statement(): Stmt {
+        return if (match(PRINT)) {
+            printStatement()
+        } else {
+            expressionStatement()
+        }
+
+    }
+
+    // printStmt      → "print" expression ";" ;
+    private fun printStatement(): Stmt {
+        val value = expression()
+        consume(SEMICOLON, "Expect ';' after value.")
+        return Stmt.Print(value)
+    }
+
+    // exprStmt       → expression ";" ;
+    private fun expressionStatement(): Stmt {
+        val expr = expression()
+        consume(SEMICOLON, "Expect ';' after expression.")
+        return Stmt.Expression(expr)
+    }
 
     // expression     → equality ;
     private fun expression(): Expr {
