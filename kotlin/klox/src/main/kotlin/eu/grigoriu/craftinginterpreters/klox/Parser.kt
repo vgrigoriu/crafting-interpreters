@@ -3,11 +3,11 @@ package eu.grigoriu.craftinginterpreters.klox
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
 class Parser(private val tokens: List<Token>, private val errorReporter: ErrorReporter) {
-    // program        → statement* EOF ;
-    fun parse(): List<Stmt> {
-        val statements = mutableListOf<Stmt>()
+    // program        → declaration* EOF ;
+    fun parse(): List<Stmt?> {
+        val statements = mutableListOf<Stmt?>()
         while (!isAtEnd()) {
-            statements.add(statement())
+            statements.add(declaration())
         }
 
         return statements
@@ -16,6 +16,33 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     private class ParseError : RuntimeException()
 
     private var current = 0
+
+    // declaration    → varDecl | statement ;
+    private fun declaration(): Stmt? {
+        try {
+            if (match(VAR)) {
+                return varDeclaration()
+            }
+
+            return statement()
+        } catch (error: ParseError) {
+            synchronize()
+            return null
+        }
+    }
+
+    // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+    private fun varDeclaration(): Stmt {
+        val name = consume(IDENTIFIER, "Expect variable name.")
+
+        var initializer: Expr? = null
+        if (match(EQUAL)) {
+            initializer = expression()
+        }
+
+        consume(SEMICOLON, "Expect ';' after variable declaration.")
+        return Stmt.Var(name, initializer)
+    }
 
     // statement      → exprStmt | printStmt ;
     private fun statement(): Stmt {
@@ -77,7 +104,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return primary()
     }
 
-    //primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+    //primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
     private fun primary(): Expr {
         if (match(FALSE)) {
             return Expr.Literal(false)
@@ -93,6 +120,10 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
         if (match(NUMBER, STRING)) {
             return Expr.Literal(previous().literal)
+        }
+
+        if (match(IDENTIFIER)) {
+            return Expr.Variable(previous())
         }
 
         if (match(LEFT_PAREN)) {

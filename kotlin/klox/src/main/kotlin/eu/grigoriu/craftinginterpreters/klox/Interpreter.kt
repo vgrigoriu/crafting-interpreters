@@ -3,10 +3,12 @@ package eu.grigoriu.craftinginterpreters.klox
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
 class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
-    fun interpret(statements: List<Stmt>) {
+    fun interpret(statements: List<Stmt?>) {
         try {
             for (statement in statements) {
-                execute(statement)
+                if (statement != null) {
+                    execute(statement)
+                }
             }
         } catch (error: RuntimeError) {
             errorReporter.runtimeError(error)
@@ -24,6 +26,10 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
     override fun visitPrintStmt(stmt: Stmt.Print) {
         val value = evaluate(stmt.expression)
         println(stringify(value))
+    }
+
+    override fun visitVarStmt(stmt: Stmt.Var) {
+        TODO("Not yet implemented")
     }
 
     override fun visitLiteralExpr(expr: Expr.Literal): Any? {
@@ -45,6 +51,10 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
             }
             else -> null
         }
+    }
+
+    override fun visitVariableExpr(expr: Expr.Variable): Any? {
+        TODO("Not yet implemented")
     }
 
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {

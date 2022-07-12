@@ -25,6 +25,10 @@ class AstPrinter : Expr.Visitor<String> {
         return paranthesize(expr.operator.lexeme, expr.right)
     }
 
+    override fun visitVariableExpr(expr: Expr.Variable): String {
+        TODO("Not yet implemented")
+    }
+
     private fun paranthesize(name: String, vararg exprs: Expr): String {
         val builder = StringBuilder()
 
