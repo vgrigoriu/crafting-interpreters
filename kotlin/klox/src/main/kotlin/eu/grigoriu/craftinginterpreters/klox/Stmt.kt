@@ -25,7 +25,7 @@ abstract class Stmt {
 
     class Var(
         val name: Token,
-        val initializer: Expr,
+        val initializer: Expr?,
     ) : Stmt() {
         override fun <R> accept(visitor: Visitor<R>): R {
             return visitor.visitVarStmt(this)

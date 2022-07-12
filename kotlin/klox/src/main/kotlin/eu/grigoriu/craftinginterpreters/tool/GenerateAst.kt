@@ -34,7 +34,7 @@ fun main(args: Array<String>) {
             Field("Expr", "expression"))),
         Type("Var", listOf(
             Field("Token", "name"),
-            Field("Expr", "initializer"))),
+            Field("Expr?", "initializer"))),
     ))
 }
 
