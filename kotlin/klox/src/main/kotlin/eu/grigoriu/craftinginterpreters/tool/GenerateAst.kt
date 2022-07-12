@@ -23,13 +23,18 @@ fun main(args: Array<String>) {
             Type("Unary", listOf(
                 Field("Token", "operator"),
                 Field("Expr", "right"))),
+            Type("Variable", listOf(
+                Field("Token", "name"))),
         )
     )
     defineAst(outputDir, "Stmt", listOf(
         Type("Expression", listOf(
             Field("Expr", "expression"))),
         Type("Print", listOf(
-            Field("Expr", "expression")))
+            Field("Expr", "expression"))),
+        Type("Var", listOf(
+            Field("Token", "name"),
+            Field("Expr", "initializer"))),
     ))
 }
 
