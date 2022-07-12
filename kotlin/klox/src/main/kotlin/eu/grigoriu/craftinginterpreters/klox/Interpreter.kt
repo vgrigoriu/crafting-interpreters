@@ -64,6 +64,10 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
         return environment.get(expr.name)
     }
 
+    override fun visitAssignExpr(expr: Expr.Assign): Any? {
+        TODO("Not yet implemented")
+    }
+
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
         val left = evaluate(expr.left)
         val right = evaluate(expr.right)

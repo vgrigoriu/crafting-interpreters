@@ -12,29 +12,41 @@ fun main(args: Array<String>) {
     val outputDir = args[0]
     defineAst(
         outputDir, "Expr", listOf(
+            Type("Assign", listOf(
+                Field("Token", "name"),
+                Field("Expr", "value"),
+            )),
             Type("Binary", listOf(
                 Field("Expr", "left"),
                 Field("Token", "operator"),
-                Field("Expr", "right"))),
+                Field("Expr", "right"),
+            )),
             Type("Grouping", listOf(
-                Field("Expr", "expression"))),
+                Field("Expr", "expression"),
+            )),
             Type("Literal", listOf(
-                Field("Any?", "value"))),
+                Field("Any?", "value"),
+            )),
             Type("Unary", listOf(
                 Field("Token", "operator"),
-                Field("Expr", "right"))),
+                Field("Expr", "right"),
+            )),
             Type("Variable", listOf(
-                Field("Token", "name"))),
+                Field("Token", "name"),
+            )),
         )
     )
     defineAst(outputDir, "Stmt", listOf(
         Type("Expression", listOf(
-            Field("Expr", "expression"))),
+            Field("Expr", "expression"),
+        )),
         Type("Print", listOf(
-            Field("Expr", "expression"))),
+            Field("Expr", "expression"),
+        )),
         Type("Var", listOf(
             Field("Token", "name"),
-            Field("Expr?", "initializer"))),
+            Field("Expr?", "initializer"),
+        )),
     ))
 }
 
