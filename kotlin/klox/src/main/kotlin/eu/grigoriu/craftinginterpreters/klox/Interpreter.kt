@@ -3,14 +3,12 @@ package eu.grigoriu.craftinginterpreters.klox
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
 class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
-    private val environment = Environment()
+    private var environment = Environment()
 
     fun interpret(statements: List<Stmt?>) {
         try {
-            for (statement in statements) {
-                if (statement != null) {
-                    execute(statement)
-                }
+            for (statement in statements.filterNotNull()) {
+                execute(statement)
             }
         } catch (error: RuntimeError) {
             errorReporter.runtimeError(error)
@@ -19,6 +17,10 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
 
     private fun execute(stmt: Stmt) {
         stmt.accept(this)
+    }
+
+    override fun visitBlockStmt(stmt: Stmt.Block) {
+        executeBlock(stmt.statements, Environment(environment))
     }
 
     override fun visitExpressionStmt(stmt: Stmt.Expression) {
@@ -115,6 +117,18 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
             BANG_EQUAL -> left != right
             EQUAL_EQUAL -> left == right
             else -> null
+        }
+    }
+
+    private fun executeBlock(statements: List<Stmt?>, environment: Environment) {
+        val previous = this.environment
+        try {
+            this.environment = environment
+            for (statement in statements.filterNotNull()) {
+                execute(statement)
+            }
+        } finally {
+            this.environment = previous
         }
     }
 

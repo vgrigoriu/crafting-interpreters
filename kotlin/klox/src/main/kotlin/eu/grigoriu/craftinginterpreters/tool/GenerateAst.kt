@@ -37,6 +37,9 @@ fun main(args: Array<String>) {
         )
     )
     defineAst(outputDir, "Stmt", listOf(
+        Type("Block", listOf(
+            Field("List<Stmt?>", "statements"),
+        )),
         Type("Expression", listOf(
             Field("Expr", "expression"),
         )),

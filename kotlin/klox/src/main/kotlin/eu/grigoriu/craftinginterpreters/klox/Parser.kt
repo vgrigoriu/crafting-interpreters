@@ -44,10 +44,12 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return Stmt.Var(name, initializer)
     }
 
-    // statement      → exprStmt | printStmt ;
+    // statement      → exprStmt | printStmt | block ;
     private fun statement(): Stmt {
         return if (match(PRINT)) {
             printStatement()
+        } else if (match(LEFT_BRACE)) {
+            Stmt.Block(block())
         } else {
             expressionStatement()
         }
@@ -59,6 +61,18 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         val value = expression()
         consume(SEMICOLON, "Expect ';' after value.")
         return Stmt.Print(value)
+    }
+
+    // block          → "{" declaration* "}" ;
+    private fun block(): List<Stmt?> {
+        val statements = mutableListOf<Stmt?>()
+
+        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+            statements.add(declaration())
+        }
+
+        consume(RIGHT_BRACE, "Expect '}' after block.")
+        return statements
     }
 
     // exprStmt       → expression ";" ;
