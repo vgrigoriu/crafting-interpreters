@@ -44,9 +44,11 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return Stmt.Var(name, initializer)
     }
 
-    // statement      → exprStmt | printStmt | block ;
+    // statement      → exprStmt | ifStmt | printStmt | block ;
     private fun statement(): Stmt {
-        return if (match(PRINT)) {
+        return if (match(IF)) {
+            ifStatement()
+        } else if (match(PRINT)) {
             printStatement()
         } else if (match(LEFT_BRACE)) {
             Stmt.Block(block())
@@ -54,6 +56,21 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             expressionStatement()
         }
 
+    }
+
+    // ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
+    private fun ifStatement(): Stmt {
+        consume(LEFT_PAREN, "Expect '(' after 'if'.")
+        val condition = expression()
+        consume(RIGHT_PAREN, "Expect ')' after 'if' condition.")
+
+        val thenBranch = statement()
+        var elseBranch: Stmt? = null
+        if (match(ELSE)) {
+            elseBranch = statement()
+        }
+
+        return Stmt.If(condition, thenBranch, elseBranch)
     }
 
     // printStmt      → "print" expression ";" ;
