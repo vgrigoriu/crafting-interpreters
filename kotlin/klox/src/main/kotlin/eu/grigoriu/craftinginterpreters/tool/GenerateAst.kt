@@ -27,6 +27,11 @@ fun main(args: Array<String>) {
             Type("Literal", listOf(
                 Field("Any?", "value"),
             )),
+            Type("Logical", listOf(
+                Field("Expr", "left"),
+                Field("Token", "operator"),
+                Field("Expr", "right"),
+            )),
             Type("Unary", listOf(
                 Field("Token", "operator"),
                 Field("Expr", "right"),
