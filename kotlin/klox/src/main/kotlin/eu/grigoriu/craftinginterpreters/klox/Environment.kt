@@ -17,6 +17,7 @@ class Environment(private val enclosing: Environment?) {
 
         if (enclosing != null) {
             enclosing.assign(name, value)
+            return
         }
 
         throw RuntimeError(name, "Undefined variable '${name.lexeme}'.")

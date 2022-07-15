@@ -104,9 +104,9 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return assignment()
     }
 
-    // assignment     → IDENTIFIER "=" assignment | equality ;
+    // assignment     → IDENTIFIER "=" assignment | logic_or ;
     private fun assignment(): Expr {
-        val expr = equality()
+        val expr = or()
 
         if (match(EQUAL)) {
             val equals = previous()
@@ -121,6 +121,16 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         }
 
         return expr
+    }
+
+    // logic_or       → logic_and ( "or" logic_and )* ;
+    private fun or(): Expr {
+        return leftAssocExpr(::and, Expr::Logical, OR)
+    }
+
+    // logic_and      → equality ( "and" equality )* ;
+    private fun and(): Expr {
+        return leftAssocExpr(::equality, Expr::Logical, AND)
     }
 
     // equality       → comparison ( ( "!=" | "==" ) comparison )* ;
@@ -214,12 +224,16 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     }
 
     private fun leftAssocExpr(operand: () -> Expr, vararg operators: TokenType): Expr {
+        return leftAssocExpr(operand, Expr::Binary, *operators)
+    }
+
+    private fun leftAssocExpr(operand: () -> Expr, ctor: (Expr, Token, Expr) -> Expr, vararg operators: TokenType): Expr {
         var expr = operand()
 
         while (match(*operators)) {
             val operator = previous()
             val right = operand()
-            expr = Expr.Binary(expr, operator, right)
+            expr = ctor(expr, operator, right)
         }
 
         return expr

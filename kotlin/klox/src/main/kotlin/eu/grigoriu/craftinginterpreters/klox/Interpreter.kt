@@ -54,7 +54,19 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
     }
 
     override fun visitLogicalExpr(expr: Expr.Logical): Any? {
-        TODO("Not yet implemented")
+        val left = evaluate(expr.left)
+
+        if (expr.operator.type == OR) {
+            if (isTruthy(left)) {
+                return left
+            }
+        } else {
+            if (!isTruthy(left)) {
+                return left
+            }
+        }
+
+        return evaluate(expr.right)
     }
 
     override fun visitGroupingExpr(expr: Expr.Grouping): Any? {

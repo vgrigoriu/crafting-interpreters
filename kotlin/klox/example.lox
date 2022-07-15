@@ -5,7 +5,7 @@ var b = 2;
     var a = 3;
     if (a > b) print a; else print b;
 
-    b += 3;
+    b = b + 3;
 }
 
 if (a > b) {
@@ -13,3 +13,9 @@ if (a > b) {
 } else {
     print b;
 }
+
+print "hi" or 2;
+print "hi" and 2;
+
+print nil or (a = 3);
+print nil and a;
