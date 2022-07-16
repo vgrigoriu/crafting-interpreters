@@ -44,9 +44,11 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return Stmt.Var(name, initializer)
     }
 
-    // statement      → exprStmt | ifStmt | printStmt | whileStmt | block ;
+    // statement      → exprStmt | forStmt | ifStmt | printStmt | whileStmt | block ;
     private fun statement(): Stmt {
-        return if (match(IF)) {
+        return if (match(FOR)) {
+            forStatement()
+        } else if (match(IF)) {
             ifStatement()
         } else if (match(PRINT)) {
             printStatement()
@@ -57,7 +59,49 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         } else {
             expressionStatement()
         }
+    }
 
+    // forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
+    //                 expression? ";"
+    //                 expression? ")" statement ;
+    private fun forStatement(): Stmt {
+        consume(LEFT_PAREN, "Expect '(' after 'for'.")
+
+        val initializer = if (match(SEMICOLON)) {
+            null
+        } else if (match(VAR)) {
+            varDeclaration()
+        } else {
+            expressionStatement()
+        }
+
+        val condition = if (!check(SEMICOLON)) {
+            expression()
+        } else {
+            Expr.Literal(true)
+        }
+        consume(SEMICOLON, "Expect ';' after loop condition.")
+
+        val increment = if (!check(RIGHT_PAREN)) {
+            expression()
+        } else {
+            null
+        }
+        consume(RIGHT_PAREN, "Expect ')' after for clauses.")
+
+        var body = statement()
+
+        if (increment != null) {
+            body = Stmt.Block(listOf(body, Stmt.Expression(increment)))
+        }
+
+        body = Stmt.While(condition, body)
+
+        if (initializer != null) {
+            body = Stmt.Block(listOf(initializer, body))
+        }
+
+        return body
     }
 
     // ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
@@ -239,7 +283,11 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return leftAssocExpr(operand, Expr::Binary, *operators)
     }
 
-    private fun leftAssocExpr(operand: () -> Expr, ctor: (Expr, Token, Expr) -> Expr, vararg operators: TokenType): Expr {
+    private fun leftAssocExpr(
+        operand: () -> Expr,
+        ctor: (Expr, Token, Expr) -> Expr,
+        vararg operators: TokenType
+    ): Expr {
         var expr = operand()
 
         while (match(*operators)) {
