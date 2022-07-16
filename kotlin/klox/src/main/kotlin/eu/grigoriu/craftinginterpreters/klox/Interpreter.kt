@@ -49,6 +49,10 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
         environment.define(stmt.name.lexeme, value)
     }
 
+    override fun visitWhileStmt(stmt: Stmt.While) {
+        TODO("Not yet implemented")
+    }
+
     override fun visitLiteralExpr(expr: Expr.Literal): Any? {
         return expr.value
     }

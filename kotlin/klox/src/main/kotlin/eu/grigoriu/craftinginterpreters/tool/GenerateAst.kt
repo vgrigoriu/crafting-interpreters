@@ -60,6 +60,10 @@ fun main(args: Array<String>) {
             Field("Token", "name"),
             Field("Expr?", "initializer"),
         )),
+        Type("While", listOf(
+            Field("Expr", "condition"),
+            Field("Stmt", "body"),
+        )),
     ))
 }
 
