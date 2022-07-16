@@ -50,7 +50,9 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
     }
 
     override fun visitWhileStmt(stmt: Stmt.While) {
-        TODO("Not yet implemented")
+        while (isTruthy(evaluate(stmt.condition))) {
+            execute(stmt.body)
+        }
     }
 
     override fun visitLiteralExpr(expr: Expr.Literal): Any? {

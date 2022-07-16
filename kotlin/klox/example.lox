@@ -19,3 +19,10 @@ print "hi" and 2;
 
 print nil or (a = 3);
 print nil and a;
+
+print "";
+print "Countdown";
+while (a > 0) {
+    print a;
+    a = a - 1;
+}
