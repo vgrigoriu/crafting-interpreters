@@ -151,7 +151,20 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
     }
 
     override fun visitCallExpr(expr: Expr.Call): Any? {
-        TODO("Not yet implemented")
+        val callee = evaluate(expr.callee)
+
+        val arguments = expr.arguments.map(::evaluate)
+
+        if (callee !is LoxCallable) {
+            throw RuntimeError(expr.paren, "Can only call functions and classes.")
+        }
+
+        if (arguments.size != callee.arity) {
+            // TODO: use "argument" if arity == 1.
+            throw RuntimeError(expr.paren, "Expected ${callee.arity} arguments but got ${arguments.size}.")
+        }
+
+        return callee.call(this, arguments)
     }
 
     private fun executeBlock(statements: List<Stmt?>, environment: Environment) {
