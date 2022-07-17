@@ -150,6 +150,10 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
         }
     }
 
+    override fun visitCallExpr(expr: Expr.Call): Any? {
+        TODO("Not yet implemented")
+    }
+
     private fun executeBlock(statements: List<Stmt?>, environment: Environment) {
         val previous = this.environment
         try {

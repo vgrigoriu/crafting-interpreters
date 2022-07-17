@@ -21,6 +21,11 @@ fun main(args: Array<String>) {
                 Field("Token", "operator"),
                 Field("Expr", "right"),
             )),
+            Type("Call", listOf(
+                Field("Expr", "callee"),
+                Field("Token", "paren"),
+                Field("List<Expr>", "arguments"),
+            )),
             Type("Grouping", listOf(
                 Field("Expr", "expression"),
             )),

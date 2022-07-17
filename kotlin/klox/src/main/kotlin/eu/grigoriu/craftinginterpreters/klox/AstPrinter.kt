@@ -6,11 +6,15 @@ class AstPrinter : Expr.Visitor<String> {
     }
 
     override fun visitAssignExpr(expr: Expr.Assign): String {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun visitBinaryExpr(expr: Expr.Binary): String {
         return paranthesize(expr.operator.lexeme, expr.left, expr.right)
+    }
+
+    override fun visitCallExpr(expr: Expr.Call): String {
+        TODO()
     }
 
     override fun visitGroupingExpr(expr: Expr.Grouping): String {
@@ -26,7 +30,7 @@ class AstPrinter : Expr.Visitor<String> {
     }
 
     override fun visitLogicalExpr(expr: Expr.Logical): String {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun visitUnaryExpr(expr: Expr.Unary): String {
@@ -34,7 +38,7 @@ class AstPrinter : Expr.Visitor<String> {
     }
 
     override fun visitVariableExpr(expr: Expr.Variable): String {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     private fun paranthesize(name: String, vararg exprs: Expr): String {
