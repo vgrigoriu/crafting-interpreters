@@ -209,7 +209,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return leftAssocExpr(::unary, SLASH, STAR)
     }
 
-    // unary          → ( "!" | "-" ) unary | primary ;
+    // unary          → ( "!" | "-" ) unary | call ;
     private fun unary(): Expr {
         if (match(BANG, MINUS)) {
             val operator = previous()
@@ -217,7 +217,39 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             return Expr.Unary(operator, right)
         }
 
-        return primary()
+        return call()
+    }
+
+    // call           → primary ( "(" arguments? ")" )* ;
+    private fun call(): Expr {
+        var expr = primary()
+
+        while (true) {
+            if (match(LEFT_PAREN)) {
+                expr = finishCall(expr)
+            } else {
+                break
+            }
+        }
+
+        return expr
+    }
+
+    // arguments      → expression ( "," expression )* ;
+    private fun finishCall(callee: Expr): Expr {
+        val arguments = mutableListOf<Expr>()
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (arguments.size >= 255) {
+                    error(peek(), "Can't have more than 255 arguments.")
+                }
+                arguments.add(expression())
+            } while (match(COMMA))
+        }
+
+        val paren = consume(RIGHT_PAREN, "Expect ')' after arguments.")
+
+        return Expr.Call(callee, paren, arguments)
     }
 
     //primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
