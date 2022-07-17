@@ -1,3 +1,6 @@
+var start = clock();
+print start;
+
 var a = 1;
 var b = 2;
 
@@ -36,3 +39,5 @@ for (var f2 = 1; f1 < 100; f2 = temp + f2) {
     temp = f1;
     f1 = f2;
 }
+
+print clock() - start;
