@@ -3,7 +3,7 @@ package eu.grigoriu.craftinginterpreters.klox
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
 class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
-    private val globals = Environment()
+    val globals = Environment()
     private var environment = globals
 
     init {
@@ -40,7 +40,8 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
     }
 
     override fun visitFunctionStmt(stmt: Stmt.Function) {
-        TODO("Not yet implemented")
+        val function = LoxFunction(stmt)
+        environment.define(stmt.name.lexeme, function)
     }
 
     override fun visitIfStmt(stmt: Stmt.If) {
@@ -183,7 +184,7 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
         return callee.call(this, arguments)
     }
 
-    private fun executeBlock(statements: List<Stmt?>, environment: Environment) {
+    fun executeBlock(statements: List<Stmt?>, environment: Environment) {
         val previous = this.environment
         try {
             this.environment = environment

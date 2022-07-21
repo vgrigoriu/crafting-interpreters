@@ -41,3 +41,12 @@ for (var f2 = 1; f1 < 100; f2 = temp + f2) {
 }
 
 print clock() - start;
+
+fun count(n) {
+    if (n > 1) {
+        count(n - 1);
+    }
+    print n;
+}
+
+count(3);
