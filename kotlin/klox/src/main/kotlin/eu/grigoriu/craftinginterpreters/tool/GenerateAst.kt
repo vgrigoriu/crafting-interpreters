@@ -53,6 +53,11 @@ fun main(args: Array<String>) {
         Type("Expression", listOf(
             Field("Expr", "expression"),
         )),
+        Type("Function", listOf(
+            Field("Token", "name"),
+            Field("List<Token>", "params"),
+            Field("List<Stmt?>", "body"),
+        )),
         Type("If", listOf(
             Field("Expr", "condition"),
             Field("Stmt", "thenBranch"),
