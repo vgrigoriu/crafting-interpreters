@@ -1,52 +1,10 @@
-var start = clock();
-print start;
-
-var a = 1;
-var b = 2;
-
-{
-    var a = 3;
-    if (a > b) print a; else print b;
-
-    b = b + 3;
+fun fib(n) {
+  if (n <= 1) return n;
+  return fib(n - 2) + fib(n - 1);
 }
 
-if (a > b) {
-    print a;
-} else {
-    print b;
+for (var i = 0; i < 20; i = i + 1) {
+  var start = clock();
+  print fib(i);
+  print clock() - start;
 }
-
-print "hi" or 2;
-print "hi" and 2;
-
-print nil or (a = 3);
-print nil and a;
-
-print "";
-print "Countdown";
-while (a > 0) {
-    print a;
-    a = a - 1;
-}
-
-// fibonacci
-var f1 = 0;
-var temp;
-
-for (var f2 = 1; f1 < 100; f2 = temp + f2) {
-    print f1;
-    temp = f1;
-    f1 = f2;
-}
-
-print clock() - start;
-
-fun count(n) {
-    if (n > 1) {
-        count(n - 1);
-    }
-    print n;
-}
-
-count(3);

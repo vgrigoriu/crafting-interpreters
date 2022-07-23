@@ -58,7 +58,13 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
     }
 
     override fun visitReturnStmt(stmt: Stmt.Return) {
-        TODO("Not yet implemented")
+        val value = if (stmt.value != null) {
+            evaluate(stmt.value)
+        } else {
+            null
+        }
+
+        throw Return(value)
     }
 
     override fun visitVarStmt(stmt: Stmt.Var) {
