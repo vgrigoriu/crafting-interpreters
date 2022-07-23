@@ -58,7 +58,7 @@ abstract class Stmt {
 
     class Return(
         val keyword: Token,
-        val value: Expr,
+        val value: Expr?,
     ) : Stmt() {
         override fun <R> accept(visitor: Visitor<R>): R {
             return visitor.visitReturnStmt(this)

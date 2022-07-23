@@ -68,7 +68,7 @@ fun main(args: Array<String>) {
         )),
         Type("Return", listOf(
             Field("Token", "keyword"),
-            Field("Expr", "value"),
+            Field("Expr?", "value"),
         )),
         Type("Var", listOf(
             Field("Token", "name"),
