@@ -33,6 +33,16 @@ abstract class Resolver(private val interpreter: Interpreter, private val errorR
         resolveLocal(expr, expr.name)
     }
 
+    override fun visitFunctionStmt(stmt: Stmt.Function) {
+        beginScope()
+        for (param in stmt.params) {
+            declare(param)
+            define(param)
+        }
+        resolve(stmt.body)
+        endScope()
+    }
+
     private fun beginScope() {
         scopes.push(HashMap())
     }
