@@ -249,4 +249,8 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
 
         throw RuntimeError(operator, "Operands must be numbers.")
     }
+
+    fun resolve(expr: Expr, i: Int) {
+        TODO("Not yet implemented")
+    }
 }
