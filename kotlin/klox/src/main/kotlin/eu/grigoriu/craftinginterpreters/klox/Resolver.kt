@@ -2,7 +2,7 @@ package eu.grigoriu.craftinginterpreters.klox
 
 import java.util.*
 
-abstract class Resolver(private val interpreter: Interpreter, private val errorReporter: ErrorReporter) :
+class Resolver(private val interpreter: Interpreter, private val errorReporter: ErrorReporter) :
     Expr.Visitor<Unit>, Stmt.Visitor<Unit> {
     private val scopes = Stack<MutableMap<String, Boolean>>()
 
@@ -41,6 +41,61 @@ abstract class Resolver(private val interpreter: Interpreter, private val errorR
         }
         resolve(stmt.body)
         endScope()
+    }
+
+    override fun visitExpressionStmt(stmt: Stmt.Expression) {
+        resolve(stmt.expression)
+    }
+
+    override fun visitIfStmt(stmt: Stmt.If) {
+        resolve(stmt.condition)
+        resolve(stmt.thenBranch)
+        if (stmt.elseBranch != null) {
+            resolve(stmt.elseBranch)
+        }
+    }
+
+    override fun visitPrintStmt(stmt: Stmt.Print) {
+        resolve(stmt.expression)
+    }
+
+    override fun visitReturnStmt(stmt: Stmt.Return) {
+        if (stmt.value != null) {
+            resolve(stmt.value)
+        }
+    }
+
+    override fun visitWhileStmt(stmt: Stmt.While) {
+        resolve(stmt.condition)
+        resolve(stmt.body)
+    }
+
+    override fun visitBinaryExpr(expr: Expr.Binary) {
+        resolve(expr.left)
+        resolve(expr.right)
+    }
+
+    override fun visitCallExpr(expr: Expr.Call) {
+        resolve(expr.callee)
+        for (argument in expr.arguments) {
+            resolve(argument)
+        }
+    }
+
+    override fun visitGroupingExpr(expr: Expr.Grouping) {
+        resolve(expr.expression)
+    }
+
+    override fun visitLiteralExpr(expr: Expr.Literal) {
+    }
+
+    override fun visitLogicalExpr(expr: Expr.Logical) {
+        resolve(expr.left)
+        resolve(expr.right)
+    }
+
+    override fun visitUnaryExpr(expr: Expr.Unary) {
+        resolve(expr.right)
     }
 
     private fun beginScope() {
