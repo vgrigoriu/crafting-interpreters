@@ -3,8 +3,10 @@ package eu.grigoriu.craftinginterpreters.klox
 import eu.grigoriu.craftinginterpreters.klox.TokenType.*
 
 class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
-    val globals = Environment()
+    private val globals = Environment()
     private var environment = globals
+
+    private val locals = mutableMapOf<Expr, Int>()
 
     init {
         globals.define("clock", object : LoxCallable {
@@ -120,7 +122,7 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
     }
 
     override fun visitVariableExpr(expr: Expr.Variable): Any? {
-        return environment.get(expr.name)
+        return lookUpVariable(expr.name, expr)
     }
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
@@ -210,6 +212,15 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
         return expr.accept(this)
     }
 
+    private fun lookUpVariable(name: Token, expr: Expr): Any? {
+        val distance = locals[expr]
+        return if (distance != null) {
+            environment.getAt(distance, name.lexeme)
+        } else {
+            globals[name]
+        }
+    }
+
     private fun isTruthy(obj: Any?): Boolean {
         return when (obj) {
             null -> false
@@ -250,7 +261,7 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
         throw RuntimeError(operator, "Operands must be numbers.")
     }
 
-    fun resolve(expr: Expr, i: Int) {
-        TODO("Not yet implemented")
+    fun resolve(expr: Expr, depth: Int) {
+        locals[expr] = depth
     }
 }
