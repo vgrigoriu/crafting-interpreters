@@ -6,6 +6,12 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
     Expr.Visitor<Unit>, Stmt.Visitor<Unit> {
     private val scopes = Stack<MutableMap<String, Boolean>>()
 
+    fun resolve(statements: List<Stmt?>) {
+        for (statement in statements.filterNotNull()) {
+            resolve(statement)
+        }
+    }
+
     override fun visitBlockStmt(stmt: Stmt.Block) {
         beginScope()
         resolve(stmt.statements)
@@ -34,12 +40,19 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
     }
 
     override fun visitFunctionStmt(stmt: Stmt.Function) {
+        declare(stmt.name)
+        define(stmt.name)
+
+        resolveFunction(stmt)
+    }
+
+    private fun resolveFunction(function: Stmt.Function) {
         beginScope()
-        for (param in stmt.params) {
+        for (param in function.params) {
             declare(param)
             define(param)
         }
-        resolve(stmt.body)
+        resolve(function.body)
         endScope()
     }
 
@@ -104,12 +117,6 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
 
     private fun endScope() {
         scopes.pop()
-    }
-
-    private fun resolve(statements: List<Stmt?>) {
-        for (statement in statements.filterNotNull()) {
-            resolve(statement)
-        }
     }
 
     private fun resolve(stmt: Stmt) {
