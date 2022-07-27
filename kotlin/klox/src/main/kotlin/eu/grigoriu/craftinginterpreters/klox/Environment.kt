@@ -19,6 +19,10 @@ class Environment(private val enclosing: Environment?) {
         else throw RuntimeError(name, "Undefined variable '${name.lexeme}'.")
     }
 
+    fun assignAt(distance: Int, name: Token, value: Any?) {
+        ancestor(distance).values[name.lexeme] = value
+    }
+
     operator fun get(name: Token): Any? {
         if (values.containsKey(name.lexeme)) {
             return values[name.lexeme]

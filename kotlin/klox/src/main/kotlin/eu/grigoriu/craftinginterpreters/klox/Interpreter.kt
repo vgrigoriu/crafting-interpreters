@@ -127,7 +127,14 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
         val value = evaluate(expr.value)
-        environment.assign(expr.name, value)
+
+        val distance = locals[expr]
+        if (distance != null) {
+            environment.assignAt(distance, expr.name, value)
+        } else {
+            globals.assign(expr.name, value)
+        }
+
         return value
     }
 
