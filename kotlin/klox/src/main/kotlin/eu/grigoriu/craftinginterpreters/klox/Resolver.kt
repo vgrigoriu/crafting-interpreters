@@ -6,6 +6,8 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
     Expr.Visitor<Unit>, Stmt.Visitor<Unit> {
     private val scopes = Stack<MutableMap<String, Boolean>>()
 
+    private var currentFunction = FunctionType.NONE
+
     fun resolve(statements: List<Stmt?>) {
         for (statement in statements.filterNotNull()) {
             resolve(statement)
@@ -43,10 +45,13 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
         declare(stmt.name)
         define(stmt.name)
 
-        resolveFunction(stmt)
+        resolveFunction(stmt, FunctionType.FUNCTION)
     }
 
-    private fun resolveFunction(function: Stmt.Function) {
+    private fun resolveFunction(function: Stmt.Function, type: FunctionType) {
+        val enclosingFunction = currentFunction
+        currentFunction = type
+
         beginScope()
         for (param in function.params) {
             declare(param)
@@ -54,6 +59,8 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
         }
         resolve(function.body)
         endScope()
+
+        currentFunction = enclosingFunction
     }
 
     override fun visitExpressionStmt(stmt: Stmt.Expression) {
@@ -73,6 +80,10 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
     }
 
     override fun visitReturnStmt(stmt: Stmt.Return) {
+        if (currentFunction == FunctionType.NONE) {
+            errorReporter.error(stmt.keyword, "Can't return from top-level code.")
+        }
+
         if (stmt.value != null) {
             resolve(stmt.value)
         }
@@ -131,8 +142,14 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
         if (scopes.empty()) {
             return
         }
+
+        val scope = scopes.peek()
+        if (scope.containsKey(name.lexeme)) {
+            errorReporter.error(name, "Already a variable with this name in this scope.")
+        }
+
         // Variable not ready yet.
-        scopes.peek()[name.lexeme] = false
+        scope[name.lexeme] = false
     }
 
     private fun define(name: Token) {
@@ -150,4 +167,9 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
             }
         }
     }
+}
+
+private enum class FunctionType {
+    NONE,
+    FUNCTION
 }
