@@ -21,7 +21,8 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
     }
 
     override fun visitClassStmt(stmt: Stmt.Class) {
-        TODO("Not yet implemented")
+        declare(stmt.name)
+        define(stmt.name)
     }
 
     override fun visitVarStmt(stmt: Stmt.Var) {

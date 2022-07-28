@@ -17,21 +17,39 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
     private var current = 0
 
-    // declaration    → funDecl | varDecl | statement ;
+    // declaration    → classDecl | funDecl | varDecl | statement ;
     private fun declaration(): Stmt? {
         try {
-            if (match(FUN)) {
-                return function("function")
+            return when {
+                match(CLASS) -> {
+                    classDeclaration()
+                }
+                match(FUN) -> {
+                    function("function")
+                }
+                match(VAR) -> {
+                    varDeclaration()
+                }
+                else -> statement()
             }
-            if (match(VAR)) {
-                return varDeclaration()
-            }
-
-            return statement()
         } catch (error: ParseError) {
             synchronize()
             return null
         }
+    }
+
+    private fun classDeclaration(): Stmt {
+        val name = consume(IDENTIFIER, "Expect class name.")
+        consume(LEFT_BRACE, "Expect '{' before class body.")
+
+        val methods = mutableListOf<Stmt.Function>()
+        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+            methods.add(function("method"))
+        }
+
+        consume(RIGHT_BRACE, "Expect '}' after class body")
+
+        return Stmt.Class(name, methods)
     }
 
     // funDecl        → "fun" function ;

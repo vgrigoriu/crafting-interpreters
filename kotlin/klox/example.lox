@@ -23,3 +23,11 @@ var counter = makeCounter();
 counter(); // "1".
 counter(); // "2".
 counter(); // "3".
+
+class DevonshireCream {
+  serveOn() {
+    return "Scones";
+  }
+}
+
+print DevonshireCream;

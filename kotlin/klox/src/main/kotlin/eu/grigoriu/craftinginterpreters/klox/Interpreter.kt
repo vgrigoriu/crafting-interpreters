@@ -38,7 +38,9 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
     }
 
     override fun visitClassStmt(stmt: Stmt.Class) {
-        TODO("Not yet implemented")
+        environment.define(stmt.name.lexeme, null)
+        val klass = LoxClass(stmt.name.lexeme)
+        environment.assign(stmt.name, klass)
     }
 
     override fun visitExpressionStmt(stmt: Stmt.Expression) {
