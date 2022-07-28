@@ -1,6 +1,13 @@
 package eu.grigoriu.craftinginterpreters.klox
 
-class LoxClass(private val name: String) {
+class LoxClass(val name: String) : LoxCallable {
+    override val arity: Int
+        get() = 0
+
+    override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
+        return LoxInstance(this)
+    }
+
     override fun toString(): String {
         return name
     }
