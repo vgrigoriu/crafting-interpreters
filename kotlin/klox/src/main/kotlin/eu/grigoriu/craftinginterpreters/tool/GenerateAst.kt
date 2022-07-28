@@ -50,6 +50,10 @@ fun main(args: Array<String>) {
         Type("Block", listOf(
             Field("List<Stmt?>", "statements"),
         )),
+        Type("Class", listOf(
+            Field("Token", "name"),
+            Field("List<Function>", "methods"),
+        )),
         Type("Expression", listOf(
             Field("Expr", "expression"),
         )),

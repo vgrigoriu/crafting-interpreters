@@ -37,6 +37,10 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
         executeBlock(stmt.statements, Environment(environment))
     }
 
+    override fun visitClassStmt(stmt: Stmt.Class) {
+        TODO("Not yet implemented")
+    }
+
     override fun visitExpressionStmt(stmt: Stmt.Expression) {
         evaluate(stmt.expression)
     }
