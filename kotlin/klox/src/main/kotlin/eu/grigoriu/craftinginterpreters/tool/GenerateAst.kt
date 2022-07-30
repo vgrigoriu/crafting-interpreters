@@ -26,6 +26,10 @@ fun main(args: Array<String>) {
                 Field("Token", "paren"),
                 Field("List<Expr>", "arguments"),
             )),
+            Type("Get", listOf(
+                Field("Expr", "obj"),
+                Field("Token", "name"),
+            )),
             Type("Grouping", listOf(
                 Field("Expr", "expression"),
             )),

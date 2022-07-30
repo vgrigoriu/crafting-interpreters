@@ -111,6 +111,10 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
         }
     }
 
+    override fun visitGetExpr(expr: Expr.Get) {
+        resolve(expr.obj)
+    }
+
     override fun visitGroupingExpr(expr: Expr.Grouping) {
         resolve(expr.expression)
     }

@@ -209,6 +209,15 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
         return callee.call(this, arguments)
     }
 
+    override fun visitGetExpr(expr: Expr.Get): Any? {
+        val obj = evaluate(expr.obj)
+        if (obj is LoxInstance) {
+            return obj.get(expr.name)
+        }
+
+        throw RuntimeError(expr.name, "Only instances have properties.")
+    }
+
     fun executeBlock(statements: List<Stmt?>, environment: Environment) {
         val previous = this.environment
         try {

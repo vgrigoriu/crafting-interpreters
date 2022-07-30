@@ -17,6 +17,10 @@ class AstPrinter : Expr.Visitor<String> {
         TODO()
     }
 
+    override fun visitGetExpr(expr: Expr.Get): String {
+        TODO("Not yet implemented")
+    }
+
     override fun visitGroupingExpr(expr: Expr.Grouping): String {
         return paranthesize("group", expr.expression)
     }
