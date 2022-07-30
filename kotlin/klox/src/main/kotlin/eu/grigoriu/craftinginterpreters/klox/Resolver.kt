@@ -127,6 +127,11 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
         resolve(expr.right)
     }
 
+    override fun visitSetExpr(expr: Expr.Set) {
+        resolve(expr.value)
+        resolve(expr.obj)
+    }
+
     override fun visitUnaryExpr(expr: Expr.Unary) {
         resolve(expr.right)
     }

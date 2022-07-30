@@ -220,7 +220,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return assignment()
     }
 
-    // assignment     → IDENTIFIER "=" assignment | logic_or ;
+    // assignment     → ( call "." )? IDENTIFIER "=" assignment | logic_or ;
     private fun assignment(): Expr {
         val expr = or()
 
@@ -231,6 +231,8 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             if (expr is Expr.Variable) {
                 val name = expr.name
                 return Expr.Assign(name, value)
+            } else if (expr is Expr.Get) {
+                return Expr.Set(expr.obj, expr.name, value)
             }
 
             error(equals, "Invalid assignment target.")

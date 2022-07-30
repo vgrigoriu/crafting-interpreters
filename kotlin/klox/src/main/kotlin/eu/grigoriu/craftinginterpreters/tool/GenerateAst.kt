@@ -41,6 +41,11 @@ fun main(args: Array<String>) {
                 Field("Token", "operator"),
                 Field("Expr", "right"),
             )),
+            Type("Set", listOf(
+                Field("Expr", "obj"),
+                Field("Token", "name"),
+                Field("Expr", "value"),
+            )),
             Type("Unary", listOf(
                 Field("Token", "operator"),
                 Field("Expr", "right"),

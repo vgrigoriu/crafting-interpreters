@@ -9,6 +9,7 @@ abstract class Expr {
         fun visitGroupingExpr(expr: Grouping): R
         fun visitLiteralExpr(expr: Literal): R
         fun visitLogicalExpr(expr: Logical): R
+        fun visitSetExpr(expr: Set): R
         fun visitUnaryExpr(expr: Unary): R
         fun visitVariableExpr(expr: Variable): R
     }
@@ -74,6 +75,16 @@ abstract class Expr {
     ) : Expr() {
         override fun <R> accept(visitor: Visitor<R>): R {
             return visitor.visitLogicalExpr(this)
+        }
+    }
+
+    class Set(
+        val obj: Expr,
+        val name: Token,
+        val value: Expr,
+    ) : Expr() {
+        override fun <R> accept(visitor: Visitor<R>): R {
+            return visitor.visitSetExpr(this)
         }
     }
 

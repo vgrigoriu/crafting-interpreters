@@ -32,3 +32,7 @@ class DevonshireCream {
 
 var cream = DevonshireCream();
 print cream;
+
+cream.colour = "off-white";
+
+print cream.colour;

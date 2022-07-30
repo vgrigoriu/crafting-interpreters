@@ -37,6 +37,10 @@ class AstPrinter : Expr.Visitor<String> {
         TODO()
     }
 
+    override fun visitSetExpr(expr: Expr.Set): String {
+        TODO("Not yet implemented")
+    }
+
     override fun visitUnaryExpr(expr: Expr.Unary): String {
         return paranthesize(expr.operator.lexeme, expr.right)
     }
