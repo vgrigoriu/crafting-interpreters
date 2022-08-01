@@ -42,7 +42,7 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
 
         val methods = mutableMapOf<String, LoxFunction>()
         for (method in stmt.methods) {
-            val function = LoxFunction(method, environment)
+            val function = LoxFunction(method, environment, method.name.lexeme == "init")
             methods[method.name.lexeme] = function
         }
 
@@ -55,7 +55,7 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
     }
 
     override fun visitFunctionStmt(stmt: Stmt.Function) {
-        val function = LoxFunction(stmt, environment)
+        val function = LoxFunction(stmt, environment, false)
         environment.define(stmt.name.lexeme, function)
     }
 

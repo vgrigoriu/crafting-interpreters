@@ -1,6 +1,10 @@
 package eu.grigoriu.craftinginterpreters.klox
 
-class LoxFunction(private val declaration: Stmt.Function, private val closure: Environment) : LoxCallable {
+class LoxFunction(
+    private val declaration: Stmt.Function,
+    private val closure: Environment,
+    private val isInitializer: Boolean,
+) : LoxCallable {
     override val arity: Int
         get() = declaration.params.size
 
@@ -13,7 +17,15 @@ class LoxFunction(private val declaration: Stmt.Function, private val closure: E
         try {
             interpreter.executeBlock(declaration.body, environment)
         } catch (returnValue: Return) {
-            return returnValue.value
+            return if (isInitializer) {
+                closure.getAt(0, "this")
+            } else {
+                returnValue.value
+            }
+        }
+
+        if (isInitializer) {
+            return closure.getAt(0, "this")
         }
         return null
     }
@@ -21,7 +33,7 @@ class LoxFunction(private val declaration: Stmt.Function, private val closure: E
     internal fun bind(instance: LoxInstance): LoxFunction {
         val environment = Environment(closure)
         environment.define("this", instance)
-        return LoxFunction(declaration, environment)
+        return LoxFunction(declaration, environment, isInitializer)
     }
 
     override fun toString(): String {
