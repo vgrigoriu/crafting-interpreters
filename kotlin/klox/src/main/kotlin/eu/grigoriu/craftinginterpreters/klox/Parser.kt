@@ -319,29 +319,29 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
     //primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
     private fun primary(): Expr {
-        when {
+        return when {
             match(FALSE) -> {
-                return Expr.Literal(false)
+                Expr.Literal(false)
             }
             match(TRUE) -> {
-                return Expr.Literal(true)
+                Expr.Literal(true)
             }
             match(NIL) -> {
-                return Expr.Literal(null)
+                Expr.Literal(null)
             }
             match(NUMBER, STRING) -> {
-                return Expr.Literal(previous().literal)
+                Expr.Literal(previous().literal)
             }
             match(THIS) -> {
-                return Expr.This(previous())
+                Expr.This(previous())
             }
             match(IDENTIFIER) -> {
-                return Expr.Variable(previous())
+                Expr.Variable(previous())
             }
             match(LEFT_PAREN) -> {
                 val expr = expression()
                 consume(RIGHT_PAREN, "Expect ')' after expression.")
-                return Expr.Grouping(expr)
+                Expr.Grouping(expr)
             }
             else -> throw error(peek(), "Expect expression.")
         }
