@@ -319,33 +319,33 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
     //primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
     private fun primary(): Expr {
-        if (match(FALSE)) {
-            return Expr.Literal(false)
+        when {
+            match(FALSE) -> {
+                return Expr.Literal(false)
+            }
+            match(TRUE) -> {
+                return Expr.Literal(true)
+            }
+            match(NIL) -> {
+                return Expr.Literal(null)
+            }
+            match(NUMBER, STRING) -> {
+                return Expr.Literal(previous().literal)
+            }
+            match(THIS) -> {
+                return Expr.This(previous())
+            }
+            match(IDENTIFIER) -> {
+                return Expr.Variable(previous())
+            }
+            match(LEFT_PAREN) -> {
+                val expr = expression()
+                consume(RIGHT_PAREN, "Expect ')' after expression.")
+                return Expr.Grouping(expr)
+            }
+            else -> throw error(peek(), "Expect expression.")
         }
 
-        if (match(TRUE)) {
-            return Expr.Literal(true)
-        }
-
-        if (match(NIL)) {
-            return Expr.Literal(null)
-        }
-
-        if (match(NUMBER, STRING)) {
-            return Expr.Literal(previous().literal)
-        }
-
-        if (match(IDENTIFIER)) {
-            return Expr.Variable(previous())
-        }
-
-        if (match(LEFT_PAREN)) {
-            val expr = expression()
-            consume(RIGHT_PAREN, "Expect ')' after expression.")
-            return Expr.Grouping(expr)
-        }
-
-        throw error(peek(), "Expect expression.")
     }
 
     private fun consume(type: TokenType, message: String): Token {

@@ -129,6 +129,10 @@ class Interpreter(private val errorReporter: ErrorReporter) : Expr.Visitor<Any?>
         return value
     }
 
+    override fun visitThisExpr(expr: Expr.This): Any? {
+        return lookUpVariable(expr.keyword, expr)
+    }
+
     override fun visitGroupingExpr(expr: Expr.Grouping): Any? {
         return evaluate(expr.expression)
     }

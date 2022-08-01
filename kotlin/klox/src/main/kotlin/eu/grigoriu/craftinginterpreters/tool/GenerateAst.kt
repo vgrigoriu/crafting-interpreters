@@ -46,6 +46,9 @@ fun main(args: Array<String>) {
                 Field("Token", "name"),
                 Field("Expr", "value"),
             )),
+            Type("This", listOf(
+                Field("Token", "keyword"),
+            )),
             Type("Unary", listOf(
                 Field("Token", "operator"),
                 Field("Expr", "right"),
