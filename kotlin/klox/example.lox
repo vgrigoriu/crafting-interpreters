@@ -36,3 +36,5 @@ print cream;
 cream.colour = "off-white";
 
 print cream.colour;
+
+print cream.serveOn();

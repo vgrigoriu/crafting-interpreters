@@ -1,6 +1,6 @@
 package eu.grigoriu.craftinginterpreters.klox
 
-class LoxClass(val name: String) : LoxCallable {
+class LoxClass(val name: String, private val methods: MutableMap<String, LoxFunction>) : LoxCallable {
     override val arity: Int
         get() = 0
 
@@ -10,5 +10,9 @@ class LoxClass(val name: String) : LoxCallable {
 
     override fun toString(): String {
         return name
+    }
+
+    fun findMethod(name: String): LoxFunction? {
+        return methods[name]
     }
 }
