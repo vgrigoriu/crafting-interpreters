@@ -64,6 +64,7 @@ fun main(args: Array<String>) {
         )),
         Type("Class", listOf(
             Field("Token", "name"),
+            Field("Expr.Variable", "superclass"),
             Field("List<Function>", "methods"),
         )),
         Type("Expression", listOf(
