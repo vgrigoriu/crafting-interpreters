@@ -52,3 +52,13 @@ class Cake {
 
 var cake = Cake("German chocolate");
 cake.taste();
+
+class Mammal {
+  say() {}
+}
+
+class Dog < Mammal {
+  say() {
+    return "woof";
+  }
+}
