@@ -24,6 +24,14 @@ class LoxClass(
     }
 
     fun findMethod(name: String): LoxFunction? {
-        return methods[name]
+        if (methods.containsKey(name)) {
+            return methods[name]
+        }
+
+        if (superclass != null) {
+            return superclass.findMethod(name)
+        }
+
+        return null
     }
 }

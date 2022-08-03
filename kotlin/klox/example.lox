@@ -62,3 +62,7 @@ class Dog < Mammal {
     return "woof";
   }
 }
+
+class Westie < Dog {}
+
+print Westie().say();
