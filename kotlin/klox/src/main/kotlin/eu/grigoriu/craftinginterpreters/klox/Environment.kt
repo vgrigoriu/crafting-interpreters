@@ -1,6 +1,6 @@
 package eu.grigoriu.craftinginterpreters.klox
 
-class Environment(private val enclosing: Environment?) {
+class Environment(val enclosing: Environment?) {
     private val values = mutableMapOf<String, Any?>()
 
     constructor() : this(null)

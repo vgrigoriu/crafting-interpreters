@@ -36,6 +36,11 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
             resolve(stmt.superclass)
         }
 
+        if (stmt.superclass != null) {
+            beginScope()
+            scopes.peek()["super"] = true
+        }
+
         beginScope()
         scopes.peek()["this"] = true
 
@@ -49,6 +54,9 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
         }
 
         endScope()
+        if (stmt.superclass != null) {
+            endScope()
+        }
 
         currentClass = enclosingClass
     }
@@ -161,6 +169,10 @@ class Resolver(private val interpreter: Interpreter, private val errorReporter: 
     override fun visitSetExpr(expr: Expr.Set) {
         resolve(expr.value)
         resolve(expr.obj)
+    }
+
+    override fun visitSuperExpr(expr: Expr.Super) {
+        resolveLocal(expr, expr.keyword)
     }
 
     override fun visitThisExpr(expr: Expr.This) {

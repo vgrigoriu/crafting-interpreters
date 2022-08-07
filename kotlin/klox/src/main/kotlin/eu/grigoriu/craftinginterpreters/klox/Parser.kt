@@ -325,7 +325,9 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return Expr.Call(callee, paren, arguments)
     }
 
-    //primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
+    //primary → "true" | "false" | "nil" | "this"
+    //        | NUMBER | STRING | IDENTIFIER | "(" expression ")"
+    //        | "super" "." IDENTIFIER ;
     private fun primary(): Expr {
         return when {
             match(FALSE) -> {
@@ -339,6 +341,12 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             }
             match(NUMBER, STRING) -> {
                 Expr.Literal(previous().literal)
+            }
+            match(SUPER) -> {
+                val keyword = previous()
+                consume(DOT, "Expect '.' after 'super'.")
+                val method = consume(IDENTIFIER, "Expect superclass method name.")
+                Expr.Super(keyword, method)
             }
             match(THIS) -> {
                 Expr.This(previous())

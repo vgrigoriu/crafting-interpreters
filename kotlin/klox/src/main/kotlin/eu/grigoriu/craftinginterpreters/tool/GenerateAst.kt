@@ -46,6 +46,10 @@ fun main(args: Array<String>) {
                 Field("Token", "name"),
                 Field("Expr", "value"),
             )),
+            Type("Super", listOf(
+                Field("Token", "keyword"),
+                Field("Token", "method"),
+            )),
             Type("This", listOf(
                 Field("Token", "keyword"),
             )),
